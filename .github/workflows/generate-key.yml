@@ -1,0 +1,39 @@
+name: Generate WinRAR Key
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username'
+        required: true
+      license_type:
+        description: 'License Type'
+        required: true
+        default: 'Single PC usage license'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run key generator
+      run: |
+        python generate_key.py ${{ github.event.inputs.username }} ${{ github.event.inputs.license_type }}
+
+    - name: Upload rarreg.key
+      uses: actions/upload-artifact@v2
+      with:
+        name: rarreg_file
+        path: rarreg.key
